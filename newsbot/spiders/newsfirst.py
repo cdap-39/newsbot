@@ -1,18 +1,31 @@
 # -*- coding: utf-8 -*-
 import scrapy
+import json
 
 
 class NewsfirstSpider(scrapy.Spider):
     name = 'newsfirst'
     allowed_domains = ['newsfirst.lk']
-    start_urls = ['http://newsfirst.lk/']
+    start_urls = ['http://newsfirst.lk/category/local/']
 
     def parse(self, response):
-        page = response.url.split("/")[-2]
-        self.log('**********************************************************************')
-        self.log(response.url)
-        self.log('**********************************************************************')
-        # filename = 'quotes-%s.html' % page
-        # with open(filename, 'wb') as f:
-        #     f.write(response.body)
-        # self.log('Saved file %s' % filename)
+        # Web page name
+        page = 'newsfirst-local'
+        filename = '%s.json' % page
+
+        headings = []
+
+        # Main headings
+        for news in response.css('div.main-news-heading'):
+            headings.append({
+                'heading': news.css('h1::text').extract_first()
+            })
+
+        # Sub headings
+        for news in response.css('div.sub-1-news-heading'):
+            headings.append({
+                'heading': news.css('h2::text').extract_first()
+            })
+
+        with open(filename, 'w') as outfile:
+            json.dump(headings, outfile, indent=4)
