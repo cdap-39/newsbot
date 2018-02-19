@@ -16,15 +16,15 @@ class NewsfirstSpider(scrapy.Spider):
         headings = []
 
         # Main headings
-        for news in response.css('div.main-news-heading'):
+        for news in response.css('div.main-news-block'):
             headings.append({
-                'heading': news.css('h1::text').extract_first()
+                'heading': news.css('div.main-news-heading>h1::text').extract_first()
             })
 
         # Sub headings
-        for news in response.css('div.sub-1-news-heading'):
+        for news in response.css('div.sub-1-news-block'):
             headings.append({
-                'heading': news.css('h2::text').extract_first()
+                'heading': news.css('div.sub-1-news-heading>h2::text').extract_first()
             })
 
         with open(filename, 'w') as outfile:
