@@ -13,13 +13,15 @@ class NewsfirstSpider(scrapy.Spider):
         page = 'newsfirst-local'
         filename = '%s.json' % page
 
-        headings = []
+        news = []
 
         # Main headings
-        for news in response.xpath("//div[contains(@class, 'main-news-block')]"):
-            headings.append({
-                'heading': news.xpath("a/div[contains(@class, 'main-news-heading')]/h1/text()").extract_first()
-            })
+        for news_block in response.xpath("//div[contains(@class, 'main-news-block')]"):
+            news_item = {
+                'heading': news_block.xpath("a/div[contains(@class, 'main-news-heading')]/h1/text()").extract_first(),
+                'link': news_block.xpath("a/@href").extract_first()
+            }
+            news.append(news_item)
 
         # Sub headings
         # for news in response.css('div.sub-1-news-block'):
@@ -28,4 +30,4 @@ class NewsfirstSpider(scrapy.Spider):
         #     })
 
         with open(filename, 'w') as outfile:
-            json.dump(headings, outfile, indent=4)
+            json.dump(news, outfile, indent=4)
