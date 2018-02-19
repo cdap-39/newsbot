@@ -33,5 +33,6 @@ class NewsfirstSpider(scrapy.Spider):
     # Parse content of the news article
     def parse_content(self, response):
         item = response.meta['item']
-        item['content'] = 'content'
+        content = response.xpath("string(//div[contains(@class, 'text-left')])").extract_first()
+        item['content'] = content
         yield item
