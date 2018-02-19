@@ -18,7 +18,7 @@ class NewsfirstSpider(scrapy.Spider):
         # Main headings
         for news in response.xpath("//div[contains(@class, 'main-news-block')]"):
             headings.append({
-                'heading': news.css('div.main-news-heading>h1::text').extract_first()
+                'heading': news.xpath("a/div[contains(@class, 'main-news-heading')]/h1/text()").extract_first()
             })
 
         # Sub headings
