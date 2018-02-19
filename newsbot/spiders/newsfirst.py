@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import scrapy
 import json
+from newsbot.items import NewsbotItem
 
 
 class NewsfirstSpider(scrapy.Spider):
@@ -9,19 +10,20 @@ class NewsfirstSpider(scrapy.Spider):
     start_urls = ['http://newsfirst.lk/category/local/']
 
     def parse(self, response):
-        # Web page name
-        page = 'newsfirst-local'
-        filename = '%s.json' % page
-
-        news = []
 
         # Main headings
         for news_block in response.xpath("//div[contains(@class, 'main-news-block')]"):
-            news_item = {
-                'heading': news_block.xpath("a/div[contains(@class, 'main-news-heading')]/h1/text()").extract_first(),
-                'link': news_block.xpath("a/@href").extract_first()
-            }
-            news.append(news_item)
+            heading = news_block.xpath("a/div[contains(@class, 'main-news-heading')]/h1/text()").extract_first()
+            content_link = news_block.xpath("a/@href").extract_first()
+
+            # Extract content by following the link.
+            item = NewsbotItem()
+
+            item['heading'] = heading
+            item['link'] = content_link
+            request = scrapy.Request(content_link, callback=self.parse_content)
+            request.meta['item'] = item
+            yield request
 
         # Sub headings
         # for news in response.css('div.sub-1-news-block'):
@@ -29,5 +31,8 @@ class NewsfirstSpider(scrapy.Spider):
         #         'heading': news.css('div.sub-1-news-heading>h2::text').extract_first()
         #     })
 
-        with open(filename, 'w') as outfile:
-            json.dump(news, outfile, indent=4)
+    # Parse content of the news article
+    def parse_content(self, response):
+        item = response.meta['item']
+        item['content'] = 'content'
+        yield item
