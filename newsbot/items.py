@@ -2,7 +2,7 @@
 import scrapy
 
 
-class NewsbotItem(scrapy.Item):
+class NewsItem(scrapy.Item):
     heading = scrapy.Field()
     link = scrapy.Field()
     content = scrapy.Field()

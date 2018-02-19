@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
-import json
-from newsbot.items import NewsbotItem
+from newsbot.items import NewsItem
 
 
 class NewsfirstSpider(scrapy.Spider):
@@ -17,7 +16,7 @@ class NewsfirstSpider(scrapy.Spider):
             content_link = news_block.xpath("a/@href").extract_first()
 
             # Extract content by following the link.
-            item = NewsbotItem()
+            item = NewsItem()
 
             item['heading'] = heading
             item['link'] = content_link
