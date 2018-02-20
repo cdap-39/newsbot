@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
-import json
+from newsbot.items import NewsItem
 
 
 class NewsfirstSpider(scrapy.Spider):
@@ -9,23 +9,38 @@ class NewsfirstSpider(scrapy.Spider):
     start_urls = ['http://newsfirst.lk/category/local/']
 
     def parse(self, response):
-        # Web page name
-        page = 'newsfirst-local'
-        filename = '%s.json' % page
-
-        headings = []
 
         # Main headings
-        for news in response.css('div.main-news-block'):
-            headings.append({
-                'heading': news.css('div.main-news-heading>h1::text').extract_first()
-            })
+        # for news_block in response.xpath("//div[contains(@class, 'main-news-block')]"):
+        #     heading = news_block.xpath("a/div[contains(@class, 'main-news-heading')]/h1/text()").extract_first()
+        #     content_link = news_block.xpath("a/@href").extract_first()
+        #
+        #     # Extract content by following the link.
+        #     item = NewsItem()
+        #
+        #     item['heading'] = heading
+        #     item['link'] = content_link
+        #     request = scrapy.Request(content_link, callback=self.parse_content)
+        #     request.meta['item'] = item
+        #     yield request
 
         # Sub headings
-        for news in response.css('div.sub-1-news-block'):
-            headings.append({
-                'heading': news.css('div.sub-1-news-heading>h2::text').extract_first()
-            })
+        for news_block in response.css('div.sub-1-news-block'):
+            heading = news_block.xpath("a/div[contains(@class, 'sub-1-news-heading')]/h2/text()").extract_first()
+            content_link = news_block.xpath("a/@href").extract_first()
 
-        with open(filename, 'w') as outfile:
-            json.dump(headings, outfile, indent=4)
+            # Extract content by following the link.
+            item = NewsItem()
+
+            item['heading'] = heading
+            item['link'] = content_link
+            request = scrapy.Request(content_link, callback=self.parse_content)
+            request.meta['item'] = item
+            yield request
+
+    # Parse content of the news article
+    def parse_content(self, response):
+        item = response.meta['item']
+        content = response.xpath("string(//div[contains(@class, 'text-left')])").extract_first()
+        item['content'] = content
+        yield item
