@@ -66,6 +66,7 @@ ROBOTSTXT_OBEY = True
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
    'newsbot.pipelines.JsonWriterPipeline': 300,
+   'newsbot.pipelines.MongoDBPipeline': 800
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
