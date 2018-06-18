@@ -1,17 +1,15 @@
-# -*- coding: utf-8 -*-
-from scrapy.exporters import JsonItemExporter
+import json
 
 
-class JsonPipeline(object):
-    def __init__(self):
-        self.file = open("newsfirst-local.json", 'wb')
-        self.exporter = JsonItemExporter(self.file, encoding='utf-8', ensure_ascii=False, indent=4)
-        self.exporter.start_exporting()
+class JsonWriterPipeline(object):
+
+    def open_spider(self, spider):
+        self.file = open('items.jl', 'w')
 
     def close_spider(self, spider):
-        self.exporter.finish_exporting()
         self.file.close()
 
     def process_item(self, item, spider):
-        self.exporter.export_item(item)
+        line = json.dumps(dict(item)) + "\n"
+        self.file.write(line)
         return item
