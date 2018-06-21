@@ -6,7 +6,7 @@ from newsbot.items import NewsItem
 class HirunewsSpider(scrapy.Spider):
     name = 'hirunews'
     allowed_domains = ['hirunews.lk']
-    start_urls = ['http://www.hirunews.lk/local-news.php']
+    start_urls = ['http://www.hirunews.lk/local-news.php?pageID=%d' % page for page in range(1,1842)]
 
     def parse(self, response):
 
