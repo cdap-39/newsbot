@@ -31,4 +31,5 @@ class HirunewsSpider(scrapy.Spider):
         date = response.xpath("//div[contains(@class, 'lts-cntbx2')]//div[contains(@class, 'time')]/text()").extract_first()
         item['content'] = content
         item['date'] = date
+        item['image'] = response.xpath("//div[contains(@class, 'latest-pic')]/img/@src").extract_first()
         yield item
