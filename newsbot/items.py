@@ -7,3 +7,4 @@ class NewsItem(scrapy.Item):
     link = scrapy.Field()
     content = scrapy.Field()
     date = scrapy.Field()
+    image = scrapy.Field()

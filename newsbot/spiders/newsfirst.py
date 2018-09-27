@@ -45,4 +45,5 @@ class NewsfirstSpider(scrapy.Spider):
         date = response.xpath("//div[contains(@class, 'emp-date-bar-main')]/p/text()").extract_first()
         item['content'] = content
         item['date'] = date
+        item['image'] = response.xpath("//div[contains(@class, 'main-news-block')]//img/@src").extract_first()
         yield item
